@@ -1,6 +1,9 @@
 # %%
 import pandas as pd
 
+import os
+print("Diretório atual:", os.getcwd())
+
 df = pd.read_csv("../data/customers.csv", sep=";")
 df
 # %%
