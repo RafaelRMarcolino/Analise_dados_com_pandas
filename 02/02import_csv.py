@@ -2,8 +2,11 @@
 
 import pandas as pd
 
+import os
+print("Diretório atual:", os.getcwd())
+
 # %%
-df_customers = pd.read_csv("../data/customers.csv", sep=";")
+df_customers = pd.read_csv("c:/Users/ralfr/estudo/analise_gir/Analise_dados_com_pandas/data/customers.csv", sep=";")
 df_customers
 
 #%%
@@ -32,6 +35,8 @@ df_maior["Name"].iloc[0]
 # %%
 #Condição logica
 condicao = (df_customers["Points"] >= 1000) & (df_customers["Points"] <= 2000)
+
+#Criando copia dos dados
 df_1000_2000 = df_customers[condicao].copy()
 
 
