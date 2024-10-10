@@ -1,44 +1,51 @@
-from faker import Faker
-import random
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import desc
+import pandas as pd
+import numpy as np
 
-spark = SparkSession.builder.appName('').getOrCreate()
+sexo = {0: 'Masculino', 1: 'Feminino'}
+cor = {0: 'Indigena', 1: 'Branca', 3: 'Preta', 4: 'Amarela', 5: 'Parda', 6: 'Sem Declaração'}
 
-# Inicializando o Faker
-fake = Faker()
+ufs = [
+    'AC',  # Acre
+    'AL',  # Alagoas
+    'AP',  # Amapá
+    'AM',  # Amazonas
+    'BA',  # Bahia
+    'CE',  # Ceará
+    'DF',  # Distrito Federal
+    'ES',  # Espírito Santo
+    'GO',  # Goiás
+    'MA',  # Maranhão
+    'MT',  # Mato Grosso
+    'MS',  # Mato Grosso do Sul
+    'MG',  # Minas Gerais
+    'PA',  # Pará
+    'PB',  # Paraíba
+    'PR',  # Paraná
+    'PE',  # Pernambuco
+    'PI',  # Piauí
+    'RJ',  # Rio de Janeiro
+    'RN',  # Rio Grande do Norte
+    'RS',  # Rio Grande do Sul
+    'RO',  # Rondônia
+    'RR',  # Roraima
+    'SC',  # Santa Catarina
+    'SP',  # São Paulo
+    'SE',  # Sergipe
+    'TO'   # Tocantins
+]
 
-# Função para gerar dados fictícios
-def generate_data(num_entries):
-    data = []
-    for _ in range(num_entries):
-        nconst = f"nm{str(random.randint(1, 300)).zfill(7)}"
-        primaryName = fake.name()
-        birthYear = random.randint(1900, 2000)
-        deathYear = random.choice([fake.year() for _ in range(10)])  # escolha aleatória de ano ou None
-        primaryProfession = ",".join(random.sample(["actor", "actress", "writer", "director", "producer", "music_department", "editor", "miscellaneous", "soundtrack", "archive_footage"], random.randint(1, 5)))
-        knownForTitles = ",".join([f"tt{str(random.randint(1000000, 9999999)).zfill(7)}" for _ in range(4)])
+num = 1000
 
-        data.append({
-            "nconst": nconst,
-            "primaryName": primaryName,
-            "birthYear": birthYear,
-            "deathYear": deathYear if random.random() > 0.2 else None,  
-            "primaryProfession": primaryProfession,
-            "knownForTitles": knownForTitles
-        })
-    return data
+data = {
+    'UF': np.random.choice(ufs, num),
+    'Sexo': np.random.choice(list(sexo.values()), num),
+    'Idade': np.random.randint(18, 70, num),
+    'Cor': np.random.choice(list(cor.values()), num),
+    'Anos de estudo': np.random.randint(0, 21, num),  # De 0 a 20
+    'Renda': np.random.randint(1000, 20000, num),
+    'Altura': np.random.uniform(1.5, 2.0, num).round(2)
+}
 
-# Gerando 300 registros
-fake_data = generate_data(300)
+df = pd.DataFrame(data)
 
-
-df = spark.createDataFrame(fake_data)
-
-df.show(truncate=False)
-
-df_order = df.orderBy(desc('nconst'))
-
-df_order.show(truncate=False)
-
-
+print(df.head(100))
